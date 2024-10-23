@@ -1,0 +1,30 @@
+# Build artifacts
+/.intellijPlatform/
+[Bb]in/
+[Oo]bj/
+build
+output
+.gradle
+.tmp
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+*.cache
+
+# IDEs
+.idea/
+*.iml
+.vs
+_ReSharper*
+_dotTrace*
+
+# Ignoriši sve log datoteke
+*.log
+
+# Ignoriši sve datoteke koje su generisane
+*.class
+*.jar
+*.war
+*.ear
