@@ -9,14 +9,14 @@ using JetBrains.ReSharper.Feature.Services.Resources;
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
     [OptionsPage(Pid, "GitHighlighter", typeof(FeaturesEnvironmentOptionsThemedIcons.CodeInspections), ParentId = ToolsPage.PID)]
-    public class GitHighlighterOptionsPage : BeSimpleOptionsPage
+    public class OptionsPage : BeSimpleOptionsPage
     {
         private const string Pid = "GitHighlighter";
 
-        public GitHighlighterOptionsPage(Lifetime lifetime, OptionsPageContext optionsPageContext, [NotNull] OptionsSettingsSmartContext optionsSettingsSmartContext)
+        public OptionsPage(Lifetime lifetime, OptionsPageContext optionsPageContext, [NotNull] OptionsSettingsSmartContext optionsSettingsSmartContext)
             : base(lifetime, optionsPageContext, optionsSettingsSmartContext)
         {
-            AddIntOption((GitHighlighterSettings key) => key.NumberOfCommitsToHighlight, "Number of commits to highlight");
+            AddIntOption((SolutionSettings key) => key.NumberOfCommitsToHighlight, "Number of commits to highlight");
         }
     }
 }
