@@ -7,9 +7,9 @@
   <depends>com.intellij.modules.rider</depends>
 
   <description>
-<![CDATA[
-<p>Sample description</p>
-]]>
+    <![CDATA[
+    <p>Sample description</p>
+    ]]>
   </description>
 
 </idea-plugin>

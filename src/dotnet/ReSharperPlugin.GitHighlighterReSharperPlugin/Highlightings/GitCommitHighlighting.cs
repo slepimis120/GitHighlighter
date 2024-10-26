@@ -1,11 +1,15 @@
 using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.DocumentModel;
+using JetBrains.ReSharper.Psi.CSharp;
 
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
-    [ConfigurableSeverityHighlighting("GitCommitHighlighting", "CSharp", OverlapResolve = OverlapResolveKind.NONE, ToolTipFormatString = "Highlighted by Git commit")]
+    [StaticSeverityHighlighting(
+        Severity.WARNING,
+        typeof(HighlightingGroupIds.CodeSmellStatic))]
     public class GitCommitHighlighting : IHighlighting
     {
+        internal const string SeverityId = "GitCommitHighlighting";
         private readonly DocumentRange _range;
         private readonly string _toolTip;
 
@@ -15,7 +19,7 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
             _toolTip = tooltip;
         }
 
-        public bool IsValid() => true;
+        public bool IsValid() => _range.IsValid();
 
         public DocumentRange CalculateRange() => _range;
 

@@ -2,7 +2,9 @@ using JetBrains.Application.Settings;
 using JetBrains.ProjectModel;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
@@ -47,9 +49,26 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 
         public List<string> GetRecentCommits(int numberOfCommits)
         {
-            return new List<string>(_recentCommits);
+            return _recentCommits.Take(numberOfCommits).ToList();
         }
+        
+        public List<string> GetModifiedFilesFromRecentCommits(int numberOfCommits)
+        {
+            var modifiedFiles = new List<string>();
 
+            if (numberOfCommits > 0)
+            {
+                var recentCommits = GetRecentCommits(numberOfCommits);
+                foreach (var commit in recentCommits)
+                {
+                    modifiedFiles.AddRange(_gitHelper.GetModifiedFiles(commit));
+                }
+            }
+
+            return modifiedFiles.Distinct().ToList();
+        }
+        
         public Task<bool> CommitsLoaded => _commitsLoaded.Task;
+        
     }
 }

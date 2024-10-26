@@ -11,28 +11,34 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
     {
         private readonly List<HighlightingInfo> _highlightings;
         private readonly string _commitMessage;
+        private bool _processingFinished;
 
         public ElementProcessor(List<HighlightingInfo> highlightings, string commitMessage)
         {
             _highlightings = highlightings;
             _commitMessage = commitMessage;
+            _processingFinished = false;
         }
 
-        public bool InteriorShouldBeProcessed(ITreeNode element) => true;
+        public bool InteriorShouldBeProcessed(ITreeNode element) => !_processingFinished;
 
         public void ProcessBeforeInterior(ITreeNode element)
         {
+            if (_processingFinished) return;
+
             var firstFiveNonWhitespaceChars = GetFirstFiveNonWhitespaceChars(element);
             if (firstFiveNonWhitespaceChars != DocumentRange.InvalidRange)
             {
                 var highlighting = new GitCommitHighlighting(firstFiveNonWhitespaceChars, _commitMessage);
                 _highlightings.Add(new HighlightingInfo(firstFiveNonWhitespaceChars, highlighting));
+                _processingFinished = true;
             }
         }
 
+
         public void ProcessAfterInterior(ITreeNode element) { }
 
-        public bool ProcessingIsFinished => false;
+        public bool ProcessingIsFinished => _processingFinished;
 
         private DocumentRange GetFirstFiveNonWhitespaceChars(ITreeNode node)
         {
@@ -51,12 +57,14 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
                     count++;
                     if (count == 5)
                     {
-                        return new DocumentRange(node.GetDocumentRange().Document, new TextRange(start, i + 1));
+                        var range = new DocumentRange(node.GetDocumentRange().Document, new TextRange(start, i + 1));
+                        return range;
                     }
                 }
             }
 
             return DocumentRange.InvalidRange;
         }
+
     }
 }

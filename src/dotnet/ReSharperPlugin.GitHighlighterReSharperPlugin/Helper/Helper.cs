@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
@@ -48,6 +50,15 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
                 process.WaitForExit();
                 return process.StandardOutput.ReadToEnd().Trim();
             }
+        }
+        
+        public List<string> GetModifiedFiles(string commitHash)
+        {
+            var result = RunGitCommand($"diff-tree --no-commit-id --name-only -r {commitHash}");
+            var files = result.Split('\n').ToList();
+            var fullPaths = files.Select(file => Path.GetFullPath(Path.Combine(_repositoryPath, file))).ToList();
+            
+            return fullPaths;
         }
     }
 }
