@@ -60,5 +60,11 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
             
             return fullPaths;
         }
+        
+        public void InvalidateCachedCommits()
+        {
+            _cachedCommits = null;
+            _cachedNumberOfCommits = 0;
+        }
     }
 }

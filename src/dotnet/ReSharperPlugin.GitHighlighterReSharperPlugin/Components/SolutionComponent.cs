@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
@@ -16,11 +17,17 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
         private readonly TaskCompletionSource<bool> _commitsLoaded = new TaskCompletionSource<bool>();
         private readonly ConcurrentBag<string> _recentCommits = new ConcurrentBag<string>();
 
+        
         public SolutionComponent(ISolution solution, ISettingsStore settingsStore)
         {
             _gitHelper = new Helper(solution.SolutionFilePath.Directory.FullPath);
             _settingsStore = settingsStore;
             OnSolutionOpened();
+            
+            var repositoryPath = solution.SolutionFilePath.Directory.FullPath;
+            var daemon = solution.GetComponent<IDaemon>();
+            var monitor = new RepositoryMonitor(repositoryPath, daemon, _gitHelper);
+            monitor.Start();
         }
 
         public void OnSolutionOpened()

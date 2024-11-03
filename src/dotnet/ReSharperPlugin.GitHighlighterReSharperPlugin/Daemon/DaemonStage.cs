@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Application.Settings;
 using JetBrains.ReSharper.Feature.Services.CSharp.Daemon;
@@ -19,6 +20,13 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 
         protected override IDaemonStageProcess CreateProcess(IDaemonProcess process, IContextBoundSettingsStore settings, DaemonProcessKind processKind, ICSharpFile file)
         {
+            if (process == null)
+                throw new ArgumentNullException(nameof(process));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+
             var recentCommitsTask = _solutionComponent.CommitsLoaded;
             recentCommitsTask.Wait();
 

@@ -41,10 +41,9 @@
     <ShadowCopyReferences>false</ShadowCopyReferences>
   </PropertyGroup>
 
-
   <ItemGroup>
-    <Compile Remove="test/**/*" />
-    <None Include="test/**/*" />
+    <Compile Remove="test\**\*" />
+    <None Include="test\**\*" />
   </ItemGroup>
 
 </Project>
