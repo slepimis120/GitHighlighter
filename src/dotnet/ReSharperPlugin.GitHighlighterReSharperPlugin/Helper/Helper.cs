@@ -1,8 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
@@ -22,15 +23,18 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
             return RunGitCommand("rev-parse --is-inside-work-tree") == "true";
         }
 
-        public List<string> GetRecentCommits(int numberOfCommits)
+        public async Task<List<string>> GetRecentCommitsAsync(int numberOfCommits)
         {
-            if (_cachedCommits == null || _cachedNumberOfCommits != numberOfCommits)
+            return await Task.Run(() =>
             {
-                var result = RunGitCommand($"log -n {numberOfCommits} --pretty=format:%H");
-                _cachedCommits = result.Split('\n').ToList();
-                _cachedNumberOfCommits = numberOfCommits;
-            }
-            return _cachedCommits;
+                if (_cachedCommits == null || _cachedNumberOfCommits != numberOfCommits)
+                {
+                    var result = RunGitCommand($"log -n {numberOfCommits} --pretty=format:%H");
+                    _cachedCommits = result.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                    _cachedNumberOfCommits = numberOfCommits;
+                }
+                return _cachedCommits;
+            });
         }
 
         private string RunGitCommand(string arguments)
@@ -51,16 +55,16 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
                 return process.StandardOutput.ReadToEnd().Trim();
             }
         }
-        
+
         public List<string> GetModifiedFiles(string commitHash)
         {
             var result = RunGitCommand($"diff-tree --no-commit-id --name-only -r {commitHash}");
-            var files = result.Split('\n').ToList();
+            var files = result.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             var fullPaths = files.Select(file => Path.GetFullPath(Path.Combine(_repositoryPath, file))).ToList();
-            
+
             return fullPaths;
         }
-        
+
         public void InvalidateCachedCommits()
         {
             _cachedCommits = null;

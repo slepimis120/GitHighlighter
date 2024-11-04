@@ -15,29 +15,23 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 
         public DaemonStage(SolutionComponent solutionComponent)
         {
-            _solutionComponent = solutionComponent;
+            _solutionComponent = solutionComponent ?? throw new ArgumentNullException(nameof(solutionComponent));
         }
 
-        protected override IDaemonStageProcess CreateProcess(IDaemonProcess process, IContextBoundSettingsStore settings, DaemonProcessKind processKind, ICSharpFile file)
+        protected override IDaemonStageProcess CreateProcess(
+            IDaemonProcess process, IContextBoundSettingsStore settings, DaemonProcessKind processKind, ICSharpFile file)
         {
-            if (process == null)
-                throw new ArgumentNullException(nameof(process));
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
-            if (file == null)
-                throw new ArgumentNullException(nameof(file));
-
             var recentCommitsTask = _solutionComponent.CommitsLoaded;
             recentCommitsTask.Wait();
 
             if (recentCommitsTask.Result)
             {
                 var numberOfCommitsToHighlight = settings.GetValue((SolutionSettings s) => s.NumberOfCommitsToHighlight);
-                var modifiedFiles = _solutionComponent.GetModifiedFilesFromRecentCommits(numberOfCommitsToHighlight);
+                var modifiedFiles = _solutionComponent.GetModifiedFilesFromRecentCommitsAsync(numberOfCommitsToHighlight).GetAwaiter().GetResult();
 
                 if (modifiedFiles.Contains(file.GetSourceFile().GetLocation().FullPath))
                 {
-                    var recentCommits = _solutionComponent.GetRecentCommits(numberOfCommitsToHighlight);
+                    var recentCommits = _solutionComponent.GetRecentCommitsAsync(numberOfCommitsToHighlight).GetAwaiter().GetResult();
                     return new DaemonStageProcess(process, file, recentCommits);
                 }
             }

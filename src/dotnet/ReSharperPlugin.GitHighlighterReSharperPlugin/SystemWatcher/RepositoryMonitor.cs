@@ -1,17 +1,16 @@
 using System;
 using System.IO;
 using JetBrains.ReSharper.Feature.Services.Daemon;
-using JetBrains.Application.Threading;
 
 namespace ReSharperPlugin.GitHighlighterReSharperPlugin
 {
     public class RepositoryMonitor
     {
         private readonly FileSystemWatcher _watcher;
-        private readonly IDaemon _daemon;
+        private readonly Lazy<IDaemon> _daemon;
         private readonly Helper _helper;
 
-        public RepositoryMonitor(string repositoryPath, IDaemon daemon, Helper helper)
+        public RepositoryMonitor(string repositoryPath, Lazy<IDaemon> daemon, Helper helper)
         {
             _daemon = daemon;
             _helper = helper;
@@ -43,8 +42,7 @@ namespace ReSharperPlugin.GitHighlighterReSharperPlugin
         private void OnGitRepositoryChanged(object sender, FileSystemEventArgs e)
         {
             _helper.InvalidateCachedCommits();
-            
-            _daemon.Invalidate();
+            _daemon.Value.Invalidate("Commits setting changed");
         }
     }
 }

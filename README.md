@@ -21,13 +21,10 @@ GitHighlighterReSharperPlugin is a ReSharper plugin that highlights information 
    cd GitHighlighter
    ```
 
-2. Open the solution file GitHighlighter.sln in Rider.
-
-3. Building the Project
-   In Rider, go to Build > Build Solution or press Ctrl+F9.
-
-4. Running the Plugin
-   In Rider, choose the configuration for "Visual Studio" and then run it, or press Ctrl+F9.
+2. Run the script to build and run the project!
+    ```sh
+    ./run_script.sh
+    ```
 
 ## License
 This project is licensed under GNU GENERAL PUBLIC LICENSE.
